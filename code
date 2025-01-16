@@ -1,0 +1,42 @@
+#include <ESP32Servo.h>
+
+const int pinServo = 15; // Pin servo
+const int trigPin = 22; // Pin Trig ultrasonik
+const int echoPin = 21; // Pin Echo ultrasonik
+long duration, distance;
+
+Servo servo;
+
+void setup() {
+  Serial.begin(115200);
+  servo.attach(pinServo);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
+
+void loop() {
+  // Baca jarak ultrasonik
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Jarak: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Kontrol servo
+  if (distance <= 8) {
+    servo.write(45); // Servo hidup (180 derajat)
+    Serial.println("Servo hidup");
+  } else {
+    servo.write(0); // Servo mati (0 derajat)
+    Serial.println("Servo mati");
+  }
+
+  delay(100);
+}
